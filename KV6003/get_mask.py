@@ -20,8 +20,8 @@ def predict_mask(model, image):
     (detection_masks, detection_boxes, image.shape[1], image.shape[2])
     detection_masks_reframed = tf.cast(detection_masks_reframed > 0.5, tf.uint8)
     output['detection_masks_reframed'] = detection_masks_reframed.numpy()
-
-    return output
+    person_masks = output['detection_masks_reframed'][output['detection_classes'][0] == 1]
+    return person_masks
 
 if __name__ == "__main__":
     segmen = get_segmentation_model()
