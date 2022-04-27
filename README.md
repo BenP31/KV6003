@@ -8,13 +8,15 @@
 ## How to run on Google Colab (RECOMMENDED WAY):
 1. Upload KV6003-Training.ipynb or KV6003-Main.ipynb to Google Colab
 2. Go to "Runtime" > "Change runtime type" and select GPU.
-3. Run all cells as needed.
+3. Download the model saves from the Model saves section below and upload them to Colab into the content folder (Don't rename anything)
+4. Run all cells as needed.
 
 ---
 
 ## How to run locally (NOT RECOMMENDED):
 1. Training files can all be ran locally with Tensorflow v2.7 or greater.
 2. get_mask.py and image segmentation model requires TensorFlow ObjectDetection API (hard to install). Instructions on installing this can be found here: https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/install.html
+3. Download the model saves from the Model saves section below, unzip them and make sure the variable are the same as the new file paths
 3. Use KV6003-Training.ipynb or KV6003-Main.ipynb in an IDE of your choosing and run
 
 ---

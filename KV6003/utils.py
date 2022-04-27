@@ -2,6 +2,7 @@ import numpy as np
 import tensorflow as tf
 from .variables import BATCH_SIZE
 from scipy.linalg import sqrtm
+import matplotlib.pyplot as plt
 
 def save_image(generated_image:tf.Tensor, save_path: str):
     """
@@ -55,9 +56,9 @@ def mask_iou(truth_tensor, synthetic_tensor, threshold = 0.2):
     return intersect/union
 
 def assemble_image(image, mask, size=BATCH_SIZE):
-    input_mask = tf.expand_dims(mask, axis=3)
-    zeros = tf.zeros((size,256,256,2))
-    assembled_image = tf.concat([image, input_mask, zeros], axis=3)
+    mask = tf.expand_dims(mask, len(tf.shape(mask)))
+    zeros = tf.zeros((256,256,2))
+    assembled_image = tf.concat([image, mask, zeros], axis=2)
     return assembled_image
 
 def mask_accuracy( prediction, truth, threshold=0.2):
@@ -97,3 +98,13 @@ def calculate_fid(model, predicted_images, real_images, test=False):
     fid = ssdif + np.trace(pred_sig + real_sig - 2 * cov_mean)
     print(f"FID: {fid:.4f}")
     return fid
+
+def display_images(*args):
+    plt.figure(figsize=(15,15))
+
+    for i in range(len(args)):
+        plt.subplot(1,len(args),i+1)
+        plt.title("Image " + str(i))
+        plt.imshow(tf.squeeze(args[i]))
+        plt.axis("off")
+    plt.show()
