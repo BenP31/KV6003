@@ -39,3 +39,6 @@
 - train_mask.py - Trains an instance of the mask recreation network
 - utils.py - contains utility functions used by the project
 
+---
+## Model saves:
+Model saves are too large to be kept on this git repository, so are available here: https://drive.google.com/file/d/1H21qF0Jl2yMPFPkoEZvmes-xzP1ZXo2u/view?usp=sharing
