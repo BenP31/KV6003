@@ -6,7 +6,10 @@ from object_detection.utils import ops
 from object_detection.utils import visualization_utils as viz
 from object_detection.utils.label_map_util import create_category_index_from_labelmap
 
-segmen = hub.load("https://tfhub.dev/tensorflow/mask_rcnn/inception_resnet_v2_1024x1024/1")
+
+def get_segmentation_model():
+    model = hub.load("https://tfhub.dev/tensorflow/mask_rcnn/inception_resnet_v2_1024x1024/1")
+    return model
 
 def predict_mask(model, image):
     pred = model(image)
@@ -21,6 +24,7 @@ def predict_mask(model, image):
     return output
 
 if __name__ == "__main__":
+    segmen = get_segmentation_model()
     _, val_ds = get_image_ds()
     for input_batch, mask_batch, target_batch in val_ds.take(1):
         for input, mask, target in zip(input_batch, mask_batch, target_batch):
