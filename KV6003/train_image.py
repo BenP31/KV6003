@@ -1,6 +1,6 @@
-from model import Image_Recovery_GAN, build_image_critic, build_image_generator, generator_loss_fn, critic_loss_fn
-from dataset import get_image_ds
-from variables import GEN_LR, CRITIC_LR, EPOCHS
+from .model import Image_Recovery_GAN, build_image_critic, build_image_generator, generator_loss_fn, critic_loss_fn
+from .dataset import get_image_ds
+from .variables import GEN_LR, CRITIC_LR, EPOCHS
 import tensorflow as tf
 from os import system
 

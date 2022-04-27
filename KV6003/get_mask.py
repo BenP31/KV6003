@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow_hub as hub
 import numpy as np
-from kv6003 import get_image_ds
+from .dataset import get_image_ds
 from object_detection.utils import ops
 from object_detection.utils import visualization_utils as viz
 from object_detection.utils.label_map_util import create_category_index_from_labelmap

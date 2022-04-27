@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from variables import BATCH_SIZE
+from .variables import BATCH_SIZE
 from scipy.linalg import sqrtm
 
 def save_image(generated_image:tf.Tensor, save_path: str):
@@ -54,9 +54,9 @@ def mask_iou(truth_tensor, synthetic_tensor, threshold = 0.2):
 
     return intersect/union
 
-def assemble_image(image, mask):
+def assemble_image(image, mask, size=BATCH_SIZE):
     input_mask = tf.expand_dims(mask, axis=3)
-    zeros = tf.zeros((BATCH_SIZE,256,256,2))
+    zeros = tf.zeros((size,256,256,2))
     assembled_image = tf.concat([image, input_mask, zeros], axis=3)
     return assembled_image
 

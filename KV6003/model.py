@@ -13,8 +13,8 @@ import imageio
 import numpy as np
 import PIL
 
-from utils import  assemble_image, mask_accuracy
-from variables import (BATCH_SIZE, CLIP_WEIGHT, CRITIC_ITERATIONS, DROPOUT_RATE, 
+from .utils import  assemble_image, mask_accuracy
+from .variables import (BATCH_SIZE, CLIP_WEIGHT, CRITIC_ITERATIONS, DROPOUT_RATE, 
                        IMAGE_OUTPUT_CHANNELS, IMAGE_SIZE)
 
 

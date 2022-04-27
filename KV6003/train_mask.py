@@ -1,6 +1,6 @@
-from model import GAN, build_mask_critic, build_mask_generator, generator_loss_fn, critic_loss_fn
-from dataset import get_mask_ds
-from variables import EPOCHS, GEN_LR, CRITIC_LR
+from .model import GAN, build_mask_critic, build_mask_generator, generator_loss_fn, critic_loss_fn
+from .dataset import get_mask_ds
+from .variables import EPOCHS, GEN_LR, CRITIC_LR
 import tensorflow as tf
 from os import system
 
