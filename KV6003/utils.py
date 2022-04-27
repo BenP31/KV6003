@@ -1,6 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from variables import BATCH_SIZE
+from scipy.linalg import sqrtm
 
 def save_image(generated_image:tf.Tensor, save_path: str):
     """
@@ -67,3 +68,32 @@ def mask_accuracy( prediction, truth, threshold=0.2):
     pred = tf.reduce_sum(tf.cast(tf.math.logical_and(prediction, truth), tf.float32))
 
     return (pred/total) 
+
+def calculate_fid(model, predicted_images, real_images, test=False):
+    # Calculate the FID score for two sets of images
+    # model: The model to use for the FID score (In most cases InceptionV3)
+    # predicted_images: The predicted images to use for the FID score
+    # real_images: The real images to use for the FID score
+    # test: Whether or not to output the prediction information for InceptionV3
+    pred_resized = tf.keras.preprocessing.image.smart_resize(predicted_images,(299,299))
+    real_resized = tf.keras.preprocessing.image.smart_resize(real_images,(299,299))
+    pred_results = model(pred_resized)
+    real_results = model(real_resized)
+
+    if test:
+        print(pred_results, real_results)
+
+    pred_mu = tf.reduce_mean(pred_results)
+    real_mu = tf.reduce_mean(real_results)
+    pred_sig = np.cov(pred_results, rowvar=False)
+    real_sig = np.cov(real_results, rowvar=False)
+
+    ssdif = np.sum((pred_mu-real_mu)**2)
+    cov_mean = sqrtm(np.dot(pred_sig, real_sig))
+
+    if np.iscomplexobj(cov_mean):
+        cov_mean = cov_mean.real
+
+    fid = ssdif + np.trace(pred_sig + real_sig - 2 * cov_mean)
+    print(f"FID: {fid:.4f}")
+    return fid
