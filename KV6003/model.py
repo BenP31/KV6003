@@ -19,19 +19,18 @@ from .variables import (BATCH_SIZE, CLIP_WEIGHT, CRITIC_ITERATIONS, DROPOUT_RATE
 
 
 
-def downsample1D(filters:int, size:int, i:int, apply_batchnorm = True) -> tf.keras.Model:
+def downsample1D(filters:int, size:int, apply_batchnorm = True) -> tf.keras.Model:
     """
     1 dimension version of the downsample layer function.
     Function to assemble each downsampling 'layer' of a network. Intended to funnel into more downsampling layers until bottleneck is reached.
     
     filters (int): dimensionality of the output of the convolutional layer (and therefore what will be passed to the next layer)
     size (int): height and width of the convolutional window
-    i (int): a number given to the layer, normally the position of the layer in the collection of the same layer (for representation sake)
     apply_batchnorm (bool): If true, includes a batch normalisation layer after the convolutional layer
 
     Returns a sequential model with all layers
     """
-    model = tf.keras.Sequential(name="Downsample1D_"+str(i))
+    model = tf.keras.Sequential()
     init = tf.random_normal_initializer(0., 0.02)
 
     model.add( layers.Conv1D(
@@ -50,19 +49,18 @@ def downsample1D(filters:int, size:int, i:int, apply_batchnorm = True) -> tf.ker
 
     return model
 
-def upsample1D(filters:int, size:int, i:int, apply_dropout = False) -> tf.keras.Model:
+def upsample1D(filters:int, size:int, apply_dropout = False) -> tf.keras.Model:
     """
     1 dimensional version of the upsample layer function.
     Function to assemble each upsampling 'layer' of a network. Intended to funnel into more upsampling layers until bottleneck is reached.
     
     filters (int): dimensionality of the output of the convolutional layer (and therefore what will be passed to the next layer)
     size (int): height and width of the convolutional window
-    i (int): a number given to the layer, normally the position of the layer in the collection of the same layer (for representation sake)
     apply_dropout (bool): If true, includes a dropout layer after the batch normalisation layer
 
     Returns a sequential model with all layers
     """
-    model = tf.keras.Sequential(name="Upsample1D_"+str(i))
+    model = tf.keras.Sequential()
     init = tf.random_normal_initializer(0., 0.02)
 
     model.add(layers.Conv1DTranspose(
@@ -83,18 +81,17 @@ def upsample1D(filters:int, size:int, i:int, apply_dropout = False) -> tf.keras.
 
     return model
 
-def upsample(filters:int, size:int, i:int, apply_dropout = False) -> tf.keras.Model:
+def upsample(filters:int, size:int, apply_dropout = False) -> tf.keras.Model:
     """
     Function to assemble each upsampling 'layer' of a network. Intended to funnel into more upsampling layers until bottleneck is reached.
     
     filters (int): dimensionality of the output of the convolutional layer (and therefore what will be passed to the next layer)
     size (int): height and width of the convolutional window
-    i (int): a number given to the layer, normally the position of the layer in the collection of the same layer (for representation sake)
     apply_dropout (bool): If true, includes a dropout layer after the batch normalisation layer
 
     Returns a sequential model with all layers
     """
-    model = tf.keras.Sequential(name="Upsample_"+str(i))
+    model = tf.keras.Sequential()
     init = tf.random_normal_initializer(0., 0.02)
 
     model.add(layers.Conv2DTranspose(
@@ -115,18 +112,17 @@ def upsample(filters:int, size:int, i:int, apply_dropout = False) -> tf.keras.Mo
 
     return model
 
-def downsample(filters:int, size:int, i:int, apply_batchnorm = True) -> tf.keras.Model:
+def downsample(filters:int, size:int, apply_batchnorm = True) -> tf.keras.Model:
     """
     Function to assemble each downsampling 'layer' of a network. Intended to funnel into more downsampling layers until bottleneck is reached.
     
     filters (int): dimensionality of the output of the convolutional layer (and therefore what will be passed to the next layer)
     size (int): height and width of the convolutional window
-    i (int): a number given to the layer, normally the position of the layer in the collection of the same layer (for representation sake)
     apply_batchnorm (bool): If true, includes a batch normalisation layer after the convolutional layer
 
     Returns a sequential model with all layers
     """
-    model = tf.keras.Sequential(name="Downsample_"+str(i))
+    model = tf.keras.Sequential()
     init = tf.random_normal_initializer(0., 0.02)
 
     model.add( layers.Conv2D(
@@ -188,23 +184,23 @@ def build_mask_generator():
 
     parts = [
         #Layers of the downsampling part of the hourglass module
-        downsample1D(64, 4, 1, apply_batchnorm = False),
-        downsample1D(128, 4, 2),
-        downsample1D(256, 4, 3),
-        downsample1D(512, 4, 4),
-        downsample1D(512, 4, 5),
-        downsample1D(512, 4, 6),
-        downsample1D(512, 4, 7),
-        downsample1D(512, 4, 8),
+        downsample1D(64, 4, apply_batchnorm = False),
+        downsample1D(128, 4),
+        downsample1D(256, 4),
+        downsample1D(512, 4),
+        downsample1D(512, 4),
+        downsample1D(512, 4),
+        downsample1D(512, 4),
+        downsample1D(512, 4),
 
         #Layers of the upsampling part of the hourglass module
-        upsample1D(512, 4, 1, apply_dropout=True),
-        upsample1D(512, 4, 2, apply_dropout=True),
-        upsample1D(512, 4, 3, apply_dropout=True),
-        upsample1D(512, 4, 4, apply_dropout=True),
-        upsample1D(256, 4, 5),
-        upsample1D(128, 4, 6),
-        upsample1D(64, 4, 7)
+        upsample1D(512, 4, apply_dropout=True),
+        upsample1D(512, 4, apply_dropout=True),
+        upsample1D(512, 4, apply_dropout=True),
+        upsample1D(512, 4, apply_dropout=True),
+        upsample1D(256, 4),
+        upsample1D(128, 4),
+        upsample1D(64, 4)
     ]
 
     last = layers.Conv1DTranspose(IMAGE_SIZE, 4,
@@ -222,18 +218,72 @@ def build_mask_generator():
 
     return tf.keras.Model(inputs=inputs, outputs=model, name="Mask_Generator")
 
+def build_mask_skip_generator():
+    inputs = layers.Input(shape=[IMAGE_SIZE,IMAGE_SIZE], batch_size=BATCH_SIZE)
+
+    downlayers = [
+        #Layers of the downsampling part of the hourglass module
+        downsample1D(64, 4, apply_batchnorm = False),
+        downsample1D(128, 4),
+        downsample1D(256, 4),
+        downsample1D(512, 4),
+        downsample1D(512, 4),
+        downsample1D(512, 4),
+        downsample1D(512, 4),
+        downsample1D(512, 4)
+    ]
+
+    #Layers of the upsampling part of the hourglass module
+    uplayers = [    
+        upsample1D(512, 4, apply_dropout=True),
+        upsample1D(512, 4, apply_dropout=True),
+        upsample1D(512, 4, apply_dropout=True),
+        upsample1D(512, 4, apply_dropout=True),
+        upsample1D(512, 4),
+        upsample1D(256, 4),
+        upsample1D(128, 4),
+        upsample1D(64, 4)
+    ]
+
+    last = layers.Conv1DTranspose(IMAGE_SIZE, 4,
+                                    strides = 2,
+                                    padding = 'same',
+                                    kernel_initializer = tf.random_normal_initializer(0, 0.02),
+                                    activation = 'tanh')
+
+    model = inputs
+
+    # Downsampling through the model
+    skips = []
+    for down in downlayers:
+        model = down(model)
+        skips.append(model)
+
+    skips = reversed(skips[:-1])
+
+    # Upsampling and establishing the skip connections
+    for up, skip in zip(uplayers, skips):
+        model = up(model)
+        model = tf.keras.layers.Concatenate()([model, skip])
+
+    model = last(model)
+
+
+    return tf.keras.Model(inputs=inputs, outputs=model, name="Mask_Generator")
+
+
 """###Critic"""
 
 def build_mask_critic():
     input = layers.Input(name="input", shape=[IMAGE_SIZE,IMAGE_SIZE], batch_size=BATCH_SIZE)
 
-    down1 = downsample1D(64, 4, 1, apply_batchnorm = False)(input)
-    down2 = downsample1D(128, 4, 2)(down1)
-    down3 = downsample1D(256, 4, 3)(down2)
+    down1 = downsample1D(64, 4, apply_batchnorm = False)(input)
+    down2 = downsample1D(128, 4)(down1)
+    down3 = downsample1D(256, 4)(down2)
 
     zp = layers.ZeroPadding1D()(down3)
 
-    down4 = downsample1D(512, 4, 4)(zp)
+    down4 = downsample1D(512, 4)(zp)
 
     zp2 = layers.ZeroPadding1D()(down4)
     c1d = layers.Conv1D(1,4, strides=1)(zp2)
@@ -254,23 +304,23 @@ def build_image_generator():
 
     parts = [
         #Layers of the downsampling part of the hourglass module
-        downsample(64, 4, 1, apply_batchnorm = False),
-        downsample(128, 4, 2),
-        downsample(256, 4, 3),
-        downsample(512, 4, 4),
-        downsample(512, 4, 5),
-        downsample(512, 4, 6),
-        downsample(512, 4, 7),
-        downsample(512, 4, 8),
+        downsample(64, 4, apply_batchnorm = False),
+        downsample(128, 4),
+        downsample(256, 4),
+        downsample(512, 4),
+        downsample(512, 4),
+        downsample(512, 4),
+        downsample(512, 4),
+        downsample(512, 4),
 
         #Layers of the upsampling part of the hourglass module
-        upsample(512, 4, 1, apply_dropout=True),
-        upsample(512, 4, 2, apply_dropout=True),
-        upsample(512, 4, 3, apply_dropout=True),
-        upsample(512, 4, 4, apply_dropout=True),
-        upsample(256, 4, 5),
-        upsample(128, 4, 6),
-        upsample(64, 4, 7)
+        upsample(512, 4, apply_dropout=True),
+        upsample(512, 4, apply_dropout=True),
+        upsample(512, 4, apply_dropout=True),
+        upsample(512, 4, apply_dropout=True),
+        upsample(256, 4),
+        upsample(128, 4),
+        upsample(64, 4)
     ]
 
     last = layers.Conv2DTranspose(IMAGE_OUTPUT_CHANNELS, 4,
@@ -293,12 +343,12 @@ def build_image_generator():
 def build_image_critic():
     input = layers.Input(name="input", shape=[IMAGE_SIZE,IMAGE_SIZE, IMAGE_OUTPUT_CHANNELS], batch_size=BATCH_SIZE)
 
-    down1 = downsample(64, 4, 1, apply_batchnorm = False)(input)
-    down2 = downsample(128, 4, 2)(down1)
-    down3 = downsample(256, 4, 3)(down2)
+    down1 = downsample(64, 4, apply_batchnorm = False)(input)
+    down2 = downsample(128, 4)(down1)
+    down3 = downsample(256, 4)(down2)
 
     zp = layers.ZeroPadding2D()(down3)
-    down4 = downsample(512, 4, 4)(zp)
+    down4 = downsample(512, 4)(zp)
     zp2 = layers.ZeroPadding2D()(down4)
     c1d = layers.Conv2D(1,4, strides=1)(zp2)
 

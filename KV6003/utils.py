@@ -70,6 +70,10 @@ def mask_accuracy( prediction, truth, threshold=0.2):
 
     return (pred/total) 
 
+def get_inception():
+    model = tf.keras.applications.InceptionV3(include_top=False, pooling='avg', input_shape=(256,256,3))
+    return model
+
 def calculate_fid(model, predicted_images, real_images, test=False):
     # Calculate the FID score for two sets of images
     # model: The model to use for the FID score (In most cases InceptionV3)
